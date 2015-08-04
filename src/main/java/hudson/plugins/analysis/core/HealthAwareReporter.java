@@ -397,7 +397,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         }
         mavenBuild.addAction(createMavenAggregatedReport(mavenBuild, buildResult));
         mavenBuild.registerAsProjectAction(HealthAwareReporter.this);
-        Run<?, ?> referenceBuild = buildResult.getHistory().getReferenceBuild();
+        Run<?, ?> referenceBuild = buildResult.getHistory().getReferenceRun();
         if (referenceBuild != null) {
             pluginLogger.log("Computing warning deltas based on reference build " + referenceBuild.getDisplayName());
         }

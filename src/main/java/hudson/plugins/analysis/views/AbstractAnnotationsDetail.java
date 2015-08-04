@@ -2,6 +2,8 @@ package hudson.plugins.analysis.views;
 
 import java.util.Collection;
 
+import javax.annotation.CheckForNull;
+
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -78,8 +80,19 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      * Returns the build as owner of this object.
      *
      * @return the owner
+     * @deprecated use {@link #getBuild()} instead
      */
-    public final Run<?, ?> getOwner() {
+    @Deprecated
+    @CheckForNull
+    public final AbstractBuild<?, ?> getOwner() {
+        return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
+    }
+
+    /**
+     * Returns the run as owner of this object.
+     * @since 1.73
+     */
+    public final Run<?, ?> getBuild() {
         return owner;
     }
 

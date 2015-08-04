@@ -1,6 +1,8 @@
 package hudson.plugins.analysis.graph;
 
+import javax.annotation.CheckForNull;
 import javax.servlet.ServletException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,9 +19,12 @@ import com.google.common.collect.Lists;
 import net.sf.json.JSONObject;
 
 import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.model.ModelObject;
+
 import hudson.plugins.analysis.core.AbstractHealthDescriptor;
 import hudson.plugins.analysis.core.BuildHistory;
+
 import hudson.util.Graph;
 
 /**
@@ -29,7 +34,7 @@ public abstract class GraphConfigurationView implements ModelObject {
     private static final Logger LOGGER = Logger.getLogger(GraphConfigurationView.class.getName());
 
     /** The owning project to configure the graphs for. */
-    private final AbstractProject<?, ?> project;
+    private final Job<?, ?> project;
 
     private final String key;
     private final BuildHistory buildHistory;
@@ -65,7 +70,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      *            the name of the plug-in
      * @return the created file
      */
-    protected static File createDefaultsFile(final AbstractProject<?, ?> project, final String pluginName) {
+    protected static File createDefaultsFile(final Job<?, ?> project, final String pluginName) {
         return new File(project.getRootDir(), pluginName + ".txt");
     }
 
@@ -88,8 +93,19 @@ public abstract class GraphConfigurationView implements ModelObject {
      * Returns the project.
      *
      * @return the project
+     * @deprecated use {@link #getJob()} instead
      */
+    @CheckForNull
+    @Deprecated
     public AbstractProject<?, ?> getOwner() {
+        return project instanceof AbstractProject ? (AbstractProject) project : null;
+    }
+
+    /**
+     * Returns the job.
+     * @since 1.73
+     */
+    public Job<?, ?> getJob() {
         return project;
     }
 

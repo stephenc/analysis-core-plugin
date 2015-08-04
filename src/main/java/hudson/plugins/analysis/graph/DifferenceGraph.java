@@ -126,7 +126,7 @@ public class DifferenceGraph extends BuildResultGraph {
                 break;
             }
 
-            int build = current.getOwner().getNumber();
+            int build = current.getBuild().getNumber();
             fixedWarnings.add(new Pair<Integer, Integer>(build, current.getNumberOfFixedWarnings()));
             newWarnings.add(new Pair<Integer, Integer>(build, current.getNumberOfNewWarnings()));
 

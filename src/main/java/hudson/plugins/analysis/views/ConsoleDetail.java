@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import javax.annotation.CheckForNull;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -106,8 +108,19 @@ public class ConsoleDetail implements ModelObject {
      * Returns the build as owner of this object.
      *
      * @return the build
+     * @deprecated use {@link #getBuild()} instead
      */
-    public Run<?, ?> getOwner() {
+    @CheckForNull
+    @Deprecated
+    public AbstractBuild<?, ?> getOwner() {
+        return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
+    }
+
+    /**
+     * Returns the run as owner of this object.
+     * @since 1.73
+     */
+    public Run<?, ?> getBuild() {
         return owner;
     }
 

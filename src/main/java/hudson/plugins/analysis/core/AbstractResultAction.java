@@ -3,6 +3,8 @@ package hudson.plugins.analysis.core;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.CheckForNull;
+
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.export.Exported;
@@ -105,13 +107,30 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * Returns the associated build of this action.
      *
      * @return the associated build of this action
+     * @deprecated use {@link #getBuild()} instead
      */
-    public final Run<?, ?> getOwner() {
-        return owner;
+    @Deprecated
+    @CheckForNull
+    public final AbstractBuild<?, ?> getOwner() {
+        return owner instanceof AbstractBuild ? (AbstractBuild<?, ?>) owner : null;
     }
 
+    /**
+     * @deprecated use {@link #getRun()} instead
+     */
+    @Deprecated
+    @CheckForNull
     @Override
-    public final Run<?, ?> getBuild() {
+    public final AbstractBuild<?, ?> getBuild() {
+        return owner instanceof AbstractBuild ? (AbstractBuild<?, ?>) owner : null;
+    }
+
+    /**
+     * Returns the associated run of this action.
+     *
+     * @return the associated run of this action
+     */
+    public Run<?, ?> getRun() {
         return owner;
     }
 

@@ -10,7 +10,7 @@
   xmlns:f="/lib/form" xmlns:u="/util">
 
     <j:choose>
-      <j:when test="${warning.canDisplayFile(it.owner)}">
+      <j:when test="${warning.canDisplayFile(it.build)}">
         <a href="source.${warning.key}/#${warning.linkLineNumber}">${warning.shortFileName}:${warning.primaryLineNumber}</a>
       </j:when>
       <j:otherwise>${warning.shortFileName}:${warning.primaryLineNumber}</j:otherwise>

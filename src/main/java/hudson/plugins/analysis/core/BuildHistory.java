@@ -177,12 +177,35 @@ public class BuildHistory {
      * @return the reference build
      * @since 1.20
      * @see #hasReferenceBuild()
+     * 
+     * @deprecated use {@link #getReferenceRun()} instead
      */
     @CheckForNull
-    public Run<?, ?> getReferenceBuild() {
+    @Deprecated
+    public AbstractBuild<?, ?> getReferenceBuild() {
         ResultAction<? extends BuildResult> action = getReferenceAction();
         if (action != null) {
-            Run<?, ?> build = action.getBuild();
+            AbstractBuild<?, ?> build = action.getBuild();
+            if (hasValidResult(build)) {
+                return build;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the reference run or <code>null</code> if there is no such
+     * run.
+     *
+     * @return the reference run
+     * @since 1.73
+     * @see #hasReferenceBuild()
+     */
+    @CheckForNull
+    public Run<?, ?> getReferenceRun() {
+        ResultAction<? extends BuildResult> action = getReferenceAction();
+        if (action != null) {
+            Run<?, ?> build = action.getRun();
             if (hasValidResult(build)) {
                 return build;
             }
@@ -222,9 +245,24 @@ public class BuildHistory {
      * @return <code>true</code> if a reference build exists, <code>false</code>
      *         otherwise
      * @since 1.20
+     * 
+     * @deprecated use {@link #getReferenceRun()} instead
      */
+    @Deprecated
     public boolean hasReferenceBuild() {
         return getReferenceBuild() != null;
+    }
+
+    /**
+     * Returns whether a reference run is available to compare the results
+     * with.
+     *
+     * @return <code>true</code> if a reference run exists, <code>false</code>
+     *         otherwise
+     * @since 1.73
+     */
+    public boolean hasReferenceRun() {
+        return getReferenceRun() != null;
     }
 
     /**

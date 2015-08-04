@@ -22,6 +22,7 @@ import hudson.maven.MavenAggregatedReport;
 import hudson.maven.MavenBuild;
 import hudson.maven.MavenModule;
 
+import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.model.HealthReport;
 import hudson.model.Result;
@@ -122,7 +123,7 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
     private void copySourceFilesToModuleBuildFolder(final MavenBuild newBuild) {
         FilePath filePath = new FilePath(new File(newBuild.getRootDir(), AbstractAnnotation.WORKSPACE_FILES));
         try {
-            filePath.copyRecursiveTo("*.tmp", new FilePath(new File(getOwner().getRootDir(), AbstractAnnotation.WORKSPACE_FILES)));
+            filePath.copyRecursiveTo("*.tmp", new FilePath(new File(getRun().getRootDir(), AbstractAnnotation.WORKSPACE_FILES)));
         }
         catch (IOException exception) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Can't copy workspace files: ", exception);
@@ -281,8 +282,10 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
      * Returns the associated build of this action.
      *
      * @return the associated build of this action
+     * @deprecated use {@link #getRun()} instead
      */
-    public Run<?, ?> getOwner() {
+    @Deprecated
+    public AbstractBuild<?, ?> getOwner() {
         return delegate.getOwner();
     }
 
@@ -300,9 +303,17 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
         return delegate.getToolTipProvider();
     }
 
+    /**
+     * @deprecated use {@link #getRun()} instead
+     */
     @Override
-    public final Run<?, ?> getBuild() {
+    @Deprecated
+    public final AbstractBuild<?, ?> getBuild() {
         return delegate.getBuild();
+    }
+
+    public Run<?, ?> getRun() {
+        return delegate.getRun();
     }
 
     @Override

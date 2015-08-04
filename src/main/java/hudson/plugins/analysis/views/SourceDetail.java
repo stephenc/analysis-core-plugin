@@ -9,6 +9,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.NoSuchElementException;
 
+import javax.annotation.CheckForNull;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -242,8 +244,19 @@ public class SourceDetail implements ModelObject {
      * Returns the build as owner of this object.
      *
      * @return the build
+     * @deprecated use {@link #getBuild()} instead
      */
-    public Run<?, ?> getOwner() {
+    @CheckForNull
+    @Deprecated
+    public AbstractBuild<?, ?> getOwner() {
+        return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
+    }
+
+    /**
+     * Returns the run as owner of this object.
+     * @since 1.73
+     */
+    public Run<?, ?> getBuild() {
         return owner;
     }
 

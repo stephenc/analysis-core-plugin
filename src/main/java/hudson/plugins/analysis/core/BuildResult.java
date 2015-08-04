@@ -343,8 +343,8 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("NP")
     private void defineReferenceBuild(final BuildHistory buildHistory) {
-        if (buildHistory.hasReferenceBuild()) {
-            referenceBuild = buildHistory.getReferenceBuild().getNumber();
+        if (buildHistory.hasReferenceRun()) {
+            referenceBuild = buildHistory.getReferenceRun().getNumber();
         }
         else {
             referenceBuild = -1;
@@ -358,15 +358,31 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *         otherwise
      */
     private boolean hasReferenceBuild() {
-        return referenceBuild > 0 && getReferenceBuild() != null;
+        return referenceBuild > 0 && getReferenceRun() != null;
     }
 
     /**
      * Returns the reference build.
      * @return the reference build.
+     * @deprecated use {@link #getReferenceRun()} instead
+     */
+    @Deprecated
+    @Exported
+    public AbstractBuild<?, ?> getReferenceBuild() {
+        if (owner instanceof AbstractBuild) {
+            return ((AbstractBuild) owner).getProject().getBuildByNumber(referenceBuild);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Return the reference run. 
+     * @return the reference run
+     * @since 1.73
      */
     @Exported
-    public Run<?, ?> getReferenceBuild() {
+    public Run<?, ?> getReferenceRun() {
         return owner.getParent().getBuildByNumber(referenceBuild);
     }
 
@@ -536,7 +552,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the serialization file.
      */
     public final XmlFile getDataFile() {
-        return new XmlFile(getXStream(), new File(getOwner().getRootDir(), getSerializationFileName()));
+        return new XmlFile(getXStream(), new File(getBuild().getRootDir(), getSerializationFileName()));
     }
 
     /**
@@ -545,7 +561,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the serialization file.
      */
     private XmlFile getFixedDataFile() {
-        return new XmlFile(getXStream(), new File(getOwner().getRootDir(),
+        return new XmlFile(getXStream(), new File(getBuild().getRootDir(),
                 getSerializationFileName().replace(".xml", "-fixed.xml")));
     }
 
@@ -583,15 +599,25 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return <code>true</code> if this result belongs to the last build
      */
     public boolean isCurrent() {
-        return getOwner().getParent().getLastBuild().number == getOwner().number;
+        return getBuild().getParent().getLastBuild().number == getBuild().number;
     }
 
     /**
      * Returns the build as owner of this action.
      *
      * @return the owner
+     * @deprecated use {@link #getBuild()} instead.
      */
-    public Run<?, ?> getOwner() {
+    @Deprecated
+    public AbstractBuild<?, ?> getOwner() {
+        return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
+    }
+
+    /**
+     * Returns the run as owner of this action.
+     * @since 1.73
+     */
+    public Run<?, ?> getBuild() {
         return owner;
     }
 
@@ -971,7 +997,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             newProject.addAnnotations(annotations);
             attachLabelProvider(newProject);
 
-            LOGGER.log(Level.FINE, "Loaded data file " + getDataFile() + " for build " + getOwner().getNumber());
+            LOGGER.log(Level.FINE, "Loaded data file " + getDataFile() + " for build " + getBuild().getNumber());
             result = newProject;
         }
         catch (IOException exception) {
@@ -1019,7 +1045,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     private Collection<FileAnnotation> loadNewWarnings() {
         Set<FileAnnotation> newWarnings = new HashSet<FileAnnotation>();
         for (FileAnnotation warning : getProject().getAnnotations()) {
-            if (warning.getBuild() == getOwner().getNumber()) {
+            if (warning.getBuild() == getBuild().getNumber()) {
                 newWarnings.add(warning);
             }
         }
@@ -1061,7 +1087,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             FileAnnotation[] annotations = (FileAnnotation[])getFixedDataFile().read();
             fixedWarnings = Sets.newHashSet(annotations);
 
-            LOGGER.log(Level.FINE, "Loaded data file " + getFixedDataFile() + " for build " + getOwner().getNumber());
+            LOGGER.log(Level.FINE, "Loaded data file " + getFixedDataFile() + " for build " + getBuild().getNumber());
         }
         catch (IOException exception) {
             LOGGER.log(Level.WARNING, "Failed to load " + getFixedDataFile(), exception);
@@ -1117,7 +1143,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the dynamic result of the analysis (detail page).
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
-        return DetailFactory.create(getResultActionType()).createTrendDetails(link, getOwner(), getContainer(), getFixedWarnings(),
+        return DetailFactory.create(getResultActionType()).createTrendDetails(link, getBuild(), getContainer(), getFixedWarnings(),
                 getNewWarnings(), getErrors(), getDefaultEncoding(), getDisplayName());
     }
 
@@ -1491,7 +1517,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     private String getReferenceBuildUrl() {
         HtmlPrinter printer = new HtmlPrinter();
         if (hasReferenceBuild()) {
-            Run<?, ?> build = getReferenceBuild();
+            Run<?, ?> build = getReferenceRun();
 
             printer.append("&nbsp;");
             printer.append("(");

@@ -2,6 +2,8 @@ package hudson.plugins.analysis.views;
 
 import java.util.Collection;
 
+import javax.annotation.CheckForNull;
+
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.model.ModelObject;
@@ -36,8 +38,19 @@ public class ErrorDetail implements ModelObject  {
      * Returns the build as owner of this action.
      *
      * @return the owner
+     * @deprecated use {@link #getBuild()} instead
      */
-    public final Run<?, ?> getOwner() {
+    @CheckForNull
+    @Deprecated
+    public final AbstractBuild<?, ?> getOwner() {
+        return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
+    }
+
+    /**
+     * Returns the run as owner of this action.
+     * @since 1.73
+     */
+    public Run<?, ?> getBuild() {
         return owner;
     }
 

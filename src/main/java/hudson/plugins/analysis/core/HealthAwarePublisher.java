@@ -5,8 +5,6 @@ import java.lang.reflect.Method;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.httpclient.methods.GetMethod;
-
 import hudson.FilePath;
 import hudson.Launcher;
 
@@ -163,7 +161,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
         BuildResult result;
         try {
             result = perform(run, workspace, logger);
-            Run<?, ?> referenceBuild = result.getHistory().getReferenceBuild();
+            Run<?, ?> referenceBuild = result.getHistory().getReferenceRun();
 
             if (GlobalSettings.instance().getFailOnCorrupt() && result.hasError()) {
                 return false;
@@ -230,8 +228,8 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
     }
 
     protected /*abstract*/ BuildResult perform(Run<?, ?> run, FilePath workspace, PluginLogger logger) throws InterruptedException, IOException{
-        if (isOverridden(HealthAwarePublisher.class, getClass(),
-                "perform", AbstractBuild.class, PluginLogger.class) && run instanceof AbstractBuild) {
+        if (run instanceof AbstractBuild && isOverridden(HealthAwarePublisher.class, getClass(),
+                "perform", AbstractBuild.class, PluginLogger.class)) {
             return perform((AbstractBuild) run, logger);
         } else {
             // Runtime error to force overriding this method

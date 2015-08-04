@@ -153,7 +153,7 @@ public abstract class BuildResultGraph {
      * @return the delta between two dates in days
      */
     public static long computeDayDelta(final Calendar first, final BuildResult second) {
-        return computeDayDelta(first, second.getOwner().getTimestamp());
+        return computeDayDelta(first, second.getBuild().getTimestamp());
     }
 
     /**

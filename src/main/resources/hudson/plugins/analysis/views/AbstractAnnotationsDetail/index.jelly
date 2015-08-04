@@ -4,7 +4,7 @@
   xmlns:i="jelly:fmt" xmlns:result="/result">
   <l:layout norefresh="true">
 
-    <st:include it="${it.owner}" page="sidepanel.jelly" />
+    <st:include it="${it.build}" page="sidepanel.jelly" />
 
     <l:main-panel>
 

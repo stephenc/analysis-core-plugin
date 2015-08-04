@@ -1,5 +1,8 @@
 package hudson.plugins.analysis.core;
 
+import javax.annotation.CheckForNull;
+
+import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.model.Action;
 import hudson.model.Result;
@@ -33,8 +36,19 @@ public interface ResultAction<T extends BuildResult> extends Action {
      * Returns the associated build of this action.
      *
      * @return the associated build of this action
+     * @deprecated use {@link #getRun()} instead
      */
-    Run<?, ?> getBuild();
+    @Deprecated
+    @CheckForNull
+    AbstractBuild<?, ?> getBuild();
+
+    /**
+     * Returns the associated run of this action.
+     *
+     * @return the associated run of this action
+     * @since 1.73
+     */
+    Run<?, ?> getRun();
 
     /**
      * Returns the associated tool tip provider.

@@ -213,7 +213,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
                 break;
             }
 
-            valuesPerBuild.put(current.getOwner(), computeSeries(current));
+            valuesPerBuild.put(current.getBuild(), computeSeries(current));
 
             if (current.hasPreviousResult()) {
                 current = current.getPreviousResult();
