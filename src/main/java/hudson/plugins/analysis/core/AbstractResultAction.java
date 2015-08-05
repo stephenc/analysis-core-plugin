@@ -4,9 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
+
+import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 import jenkins.model.Jenkins;
@@ -106,13 +110,22 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      *
      * @return the associated build of this action
      */
+    @WithBridgeMethods(value=AbstractBuild.class, adapterMethod="getAbstractBuild")
     public final Run<?, ?> getOwner() {
         return owner;
     }
 
     @Override
+    @WithBridgeMethods(value=AbstractBuild.class, adapterMethod="getAbstractBuild")
+    @Deprecated
     public final Run<?, ?> getBuild() {
         return owner;
+    }
+
+    @Restricted(NoExternalUse.class) // I think this could be private but if not then restrict it
+    @Deprecated
+    public final AbstractBuild<?, ?> getAbstractBuild() {
+      return owner instanceof AbstractBuild ? (AbstractBuild<?, ?>) owner : null;
     }
 
     @Override
